@@ -42,7 +42,6 @@
 					<image>
 						<builder>paketobuildpacks/builder-jammy-base:latest</builder>
 					</image>
-					<executable>true</executable>
 				</configuration>
 			</plugin>
 		</plugins>
