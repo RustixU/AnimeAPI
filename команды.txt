@@ -1,0 +1,54 @@
+sudo apt-get update
+sudo apt upgrade
+sudo apt-get install nginx
+sudo apt-get install systemd
+sudo apt install openjdk-17-jdk
+sudo apt-get install maven
+
+sudo adduser start
+sudo usermod -a -G sudo start
+
+sudo mkdir /home/start/app
+sudo mkdir /var/www/app
+sudo git clone https://github.com/RustixU/AnimeAPI.git
+sudo mvn install
+
+AnimeAPI.service:
+[Unit]
+Description=Spring Boot
+After=syslog.target
+After=network.target[Service]
+User=start
+Type=simple
+
+[Service]
+ExecStart=/usr/bin/java -jar /home/start/app/AnimeAPI/out/artifactes/AnimeAPI_jar/AnimeAPI.jar
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=AnimeAPI.service
+
+sudo systemctl daemon-reload
+sudo systemctl start AnimeAPI.service
+sudo systeamctl status AnimeAPI.service
+
+AnimeAPI.com.conf:
+[Install]
+WantedBy=multi-user.target
+
+AnimeAPI.com.conf:
+server {
+	listen 80;
+	listen [::]:80;
+	server_name _;
+	
+	location / {
+		proxy_pass         http://127.0.0.1:5000;
+	}
+}
+
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl status nginx
+
+http://{ip виртуалки}/
